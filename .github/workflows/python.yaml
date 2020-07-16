@@ -1,0 +1,53 @@
+name: python
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # WORKON_HOME: ~/.cache/pypoetry/virtualenvs
+      WORKON_HOME: ~/.poetry/venv
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install poetry
+      uses: dschep/install-poetry-action@v1.3
+
+    - name: Configure poetry
+      run: |
+        poetry config virtualenvs.in-project false
+        poetry config cache-dir ~/.poetry
+        poetry config virtualenvs.path ~/.poetry/venv
+
+    - name: Cache poetry venv
+      uses: actions/cache@v2
+      id: poetry-cache
+      with:
+        # path: ~/.cache/pypoetry
+        path: ~/.poetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-poetry-
+
+    - name: Install Dependencies
+      if: steps.poetry-cache.outputs.cache-hit != 'true'
+      run: poetry install -vv
+
+    - name: Show poetry env info
+      run: |
+        poetry env info
+        poetry config --list
+
+    - name: Test poetry run
+      run: |
+        poetry run pip list
+
+    #- name: Check cache size
+    #  run: du -sh ~/.poerty
