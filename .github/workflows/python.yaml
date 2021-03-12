@@ -15,6 +15,12 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+    
+    - name: Test env vars for python
+      run: python -c 'import os;print(os.environ)'
+      env:
+        ENV_SECRET: ${{ secrets.ENV_SECRET }}
+        REPO_SECRET: ${{ secrets.REPO_SECRET }}
 
     - name: Install poetry
       uses: dschep/install-poetry-action@v1.3
