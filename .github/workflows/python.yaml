@@ -12,15 +12,11 @@ jobs:
         python-version: 3.8
         
     - name: Test env vars for python
-      run: ENV_SECRET=${{ secrets.ENV_SECRET }} python -c 'import os;print(os.environ)'
-      env:
-        REPO_SECRET: ${{ secrets.REPO_SECRET }}
+      run: ENV_SECRET=${{ secrets.ENV_SECRET }} REPO_SECRET=${{ secrets.REPO_SECRET }} python -c 'import os;print(os.environ)'
+
 
   build:
     runs-on: ubuntu-latest
-    env:
-      WORKON_HOME: ~/.poetry/venv
-
     steps:
     - uses: actions/checkout@v2
 
@@ -30,14 +26,10 @@ jobs:
         python-version: 3.8
 
     - name: Install poetry
-      uses: dschep/install-poetry-action@v1.3
-
-    - name: Configure poetry
-      run: |
-        poetry config virtualenvs.create true
-        poetry config virtualenvs.in-project false
-        poetry config cache-dir ~/.poetry
-        poetry config virtualenvs.path ~/.poetry/venv
+      uses: snok/install-poetry@v1.1.2
+      with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
 
     - name: Cache poetry venv
       uses: actions/cache@v2
