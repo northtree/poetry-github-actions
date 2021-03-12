@@ -4,6 +4,7 @@ on: push
 
 jobs:
   test_env:
+    environment: TEST_SECRET
     runs-on: ubuntu-latest
     steps:
     - name: Set up Python
